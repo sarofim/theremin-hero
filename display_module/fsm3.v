@@ -1,9 +1,7 @@
 module pixelControl (input clock, resetn, startingAddressLoaded,
-                     output reg shapeDone, loadX, loadY, writeToScreen, pixelCounterIncrement, clearPixelCounter);
+                     output reg shapeDone, loadX, loadY, writeToScreen, pixelCounterIncrement, clearPixelCounter
+                     output reg [15:0] pixelCount);
   reg [1:0] currentstate, nextstate;
-  reg [15:0] pixelCount;
-
-  //pixelCount maxVal 3600 : 111000010000
 
   localparam state_idle       = 2'b00;
              state_loadPoint  = 2'b01;
@@ -40,6 +38,7 @@ module pixelControl (input clock, resetn, startingAddressLoaded,
     endcase
   end
 
+  //pixelCount maxVal 3600 : 111000010000
   always@(posedge clock) begin
     if(clearPixelCounter || resetn) pixelCount = 16'd0;
     else if(pixelCounterIncrement) pixelCount = pixelCount + 1;
