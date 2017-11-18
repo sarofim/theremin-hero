@@ -15,9 +15,9 @@ module dataPath(input clock, resetn, shiftSong, writeToScreen, loadStartAddress,
   reg currentNote1, currentNote2, currentNote3;
   always@(posedge clock) begin
     if(resetn) begin
-      regNote1 <= /*note1 seq*/
-      regNote2 <= /*note1 seq*/
-      regNote3 <= /*note1 seq*/
+      regNote1 <= 4'b0010;
+      regNote2 <= 4'b0100;
+      regNote3 <= 4'b1000;
       end
     else if(shiftSong) begin
       //set rightmost node as current note
