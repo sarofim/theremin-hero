@@ -7,27 +7,35 @@ input readyForSong;
 output reg beatIncremented;
 output reg shiftSong;
 output reg songDone;
-output reg [x:0]songCounter; //enter with length of song
+output reg [2:0]songCounter; //enter with length of song
 
 reg [3:0]currentState, nextState;
 reg enableSongCounter, resetSongCounter;
+reg [25:0]tempoCounter; //enter with correct speed
+reg resetTempoCounter;
 
 localparam 	state_idle = 3'b000,
 			state_startSong = 3'b001,
-			state_shiftSong = 3'b010,
-			start_drawScreen = 3'b011,
-			start_waitForScreen = 3'b100;
+			state_waitForSongBeat = 3'b010;
+			state_shiftSong = 3'b011,
+			state_drawScreen = 3'b100,
+			state_waitForScreen = 3'b101;
 
 always @(*) 
 	begin: state_table
 	case(currentState)
 		state_idle: nextState = readyForSong ? state_startSong : state_idle;
-		state_startSong: nextState = state_shiftSong;
-		start_shiftSong: nextState = state_drawScreen;
-		start_drawScreen: nextState = state_waitForScreen;
-		start_waitForScreen: begin
-			if (readyForSong & songCounter == x) nextState = state_idle;//enter with length of song
-			else if (readyForSong & songCounter != x) nextState = state_drawScreen;
+		state_startSong: nextState = state_waitForSongBeat;
+		state_waitForSongBeat: begin
+			if (tempCounter == 26'd49999999) nextState = state_shiftSong//add max tempo value as determined by speed of song
+			else nextState = state_waitForSongBeat;
+		end
+		state_shiftSong:
+			nextState = state_drawScreen;
+		state_drawScreen: nextState = state_waitForScreen;
+		state_waitForScreen: begin
+			if (readyForSong & songCounter == 3'd4) nextState = state_idle;//enter with length of song
+			else if (readyForSong & songCounter != 3'd4) nextState = state_waitForSongBeat;
 			else nextState = state_waitForScreen;
 		end
 	endcase
@@ -40,30 +48,41 @@ always @(*)
 	enableSongCounter = 1'b0;
 	resetSongCounter = 1'b0;
 	beatIncremented = 1'b0;
+	resetTempoCounter = 1'b0;
 
 	case (currentState)
 	state_idle: begin
-		//nothing
+		songDone == 1'b1; //is this necessary??
 	end
 	state_startSong: begin
 		resetSongCounter = 1'b1;
+		resetTempoCounter = 1'b1;
 	end
-	start_shiftSong: begin
+	state_waitForSongBeat: begin
+		//??? nothing???
+	end
+	state_shiftSong: begin
 		shiftSong = 1'b1;
 	end
-	start_drawScreen:begin
+	state_drawScreen:begin
 		beatIncremented = 1'b1;
 		enableSongCounter = 1'b1;
 	end
-	start_waitForScreen:begin
-		//nothing
+	state_waitForScreen:begin
+		//if (songCounter == 3'd4) songDone = 1'b1; //might need to put back in
 	end
 	endcase
 end
 
+always @ (posedge clock) begin //tempo - currently doing 1 second - 1Hz - 49999999 - 10111110101111000001111111
+	if (resetTempoCounter) tempoCounter = 26'd0; //add with tempo
+	else tempoCounter = tempoCounter + 26'd1;
+	if (tempoCounter == 26'd49999999) tempoCounter == 26'd0;
+end
+
 always @ (posedge clock) begin //this will have to be changed in scale up
-	if (resetSongCounter) songCounter = 2'd0;
-	else if (enableSongCounter) songCounter = songCounter + 2'd1;
+	if (resetSongCounter) songCounter = 3'd0;
+	else if (enableSongCounter) songCounter = songCounter + 3'd1;
 end
 
 always @ (posedge clock)
