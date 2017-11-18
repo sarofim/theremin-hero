@@ -42,7 +42,7 @@ always@(*)
 		state_start: nextState = start ? state_startWait : state_start;
 		state_startWait: nextState = start ? state)startWait : waitForSong;
 		state_waitForSong: begin
-			if (beatIncremented & SongDone) nextState = state_idle;
+			if (SongDone) nextState = state_idle;
 			else if (beatIncremented & !SongDone) nextState = state_loadBoxCoordinate;
 			else nextState = state_waitForSong;
 		end
