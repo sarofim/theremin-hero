@@ -1,5 +1,5 @@
 module FSM2 (clock, reset, start, beatIncremented, songDone, shapeDone, loadDefault, 
-	writeDefault, readyForSong, loadStartAddress, startingAddressLoaded, [15:0]gridCounter, [1:0]boxCounter);
+	writeDefault, readyForSong, loadStartAddress, startingAddressLoaded, gridCounter, boxCounter, currentState, nextState);
 
 input clock;
 input start;
@@ -14,10 +14,12 @@ output reg loadStartAddress;
 output reg startingAddressLoaded;
 output reg [15:0]gridCounter; //240*180 = 43200 in binary - 16 bits
 output reg [1:0]boxCounter; //3 boxes - 3 in binary is 11
+output reg [3:0] currentState, nextState;
 
-reg [3:0]currentState, nextState; //1011 = 11 in binary - 4 bits needed
-reg enableGridCounter, clearGridCounter, 
-	enableBoxCounter, clearBoxCounter;
+
+//reg [3:0]currentState, nextState; //1011 = 11 in binary - 4 bits needed
+reg enableGridCounter, resetGridCounter, 
+	enableBoxCounter, resetBoxCounter;
 
 localparam 	state_reset = 4'b0000,
 			state_resetWait = 4'b0001,
@@ -38,12 +40,12 @@ always@(*)
 		state_resetWait: nextState = reset ? state_resetWait : state_idle;
 		state_idle: nextState = state_loadDefault;
 		state_loadDefault: nextState = state_writeDefault;
-		state_writeDefault: nextState = (gridCounter == 16'd43200) ? state_start : state_loadDefault;
+		state_writeDefault: nextState = (gridCounter == 16'd43200 /*16'd4*/) ? state_start : state_loadDefault;
 		state_start: nextState = start ? state_startWait : state_start;
-		state_startWait: nextState = start ? state)startWait : waitForSong;
+		state_startWait: nextState = start ? state_startWait : state_waitForSong;
 		state_waitForSong: begin
-			if (SongDone) nextState = state_idle;
-			else if (beatIncremented & !SongDone) nextState = state_loadBoxCoordinate;
+			if (songDone) nextState = state_idle;
+			else if (beatIncremented) nextState = state_loadBoxCoordinate;
 			else nextState = state_waitForSong;
 		end
 		state_loadBoxCoordinate: nextState = state_drawShape;
@@ -77,7 +79,7 @@ always @(*)
 			//nothing
 		end
 		state_idle: begin
-			resetGridCounter;
+			resetGridCounter = 1'b1;
 		end
 		state_loadDefault: begin
 			loadDefault = 1'b1;

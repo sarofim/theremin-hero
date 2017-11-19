@@ -1,7 +1,6 @@
 vlib work
-vlog lab7part2.v 
-vsim -L altera_mf_ver -L lpm_ver part2
-
+vlog FSM1.v 
+vsim FSM1
 log -r {/*}
 add wave {/*}
 
@@ -9,40 +8,47 @@ add wave {/*}
 #try with timing where readyForSong appears before timing suggests you go
 #try other way around - readyForSong appears after timing says to go
 force {clock} 0 0ns , 1 {1ns} -r 2ns
+
 force {reset} 1
 force {readyForSong} 0
-run 10ns
+run 2ns
 
 
 force {reset} 0
-run 10ns
+run 2ns
 
 force {readyForSong} 1
-2 ns
+run 2 ns
 
 force {readyForSong} 0
-10 ns
+run 20ns
 
 force {readyForSong} 1
-2 ns
+run 2 ns
 
 force {readyForSong} 0
-10 ns
+run 20ns
 
 force {readyForSong} 1
-2 ns
+run 2 ns
 
 force {readyForSong} 0
-10 ns
+run 20ns
 
 force {readyForSong} 1
-2 ns
+run 2 ns
 
 force {readyForSong} 0
-10 ns
+run 20ns
 
 force {readyForSong} 1
-2 ns
+run 2 ns
 
 force {readyForSong} 0
-10 ns
+run 20ns
+
+force {readyForSong} 1
+run 2 ns
+
+force {readyForSong} 0
+run 20ns

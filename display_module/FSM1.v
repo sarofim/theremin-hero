@@ -13,10 +13,11 @@ reg [3:0]currentState, nextState;
 reg enableSongCounter, resetSongCounter;
 reg [25:0]tempoCounter; //enter with correct speed
 reg resetTempoCounter;
+reg startNextBeat;
 
 localparam 	state_idle = 3'b000,
 			state_startSong = 3'b001,
-			state_waitForSongBeat = 3'b010;
+			state_waitForSongBeat = 3'b010,
 			state_shiftSong = 3'b011,
 			state_drawScreen = 3'b100,
 			state_waitForScreen = 3'b101;
@@ -27,7 +28,7 @@ always @(*)
 		state_idle: nextState = readyForSong ? state_startSong : state_idle;
 		state_startSong: nextState = state_waitForSongBeat;
 		state_waitForSongBeat: begin
-			if (tempCounter == 26'd49999999) nextState = state_shiftSong//add max tempo value as determined by speed of song
+			if (startNextBeat) nextState = state_shiftSong;//add max tempo value as determined by speed of song
 			else nextState = state_waitForSongBeat;
 		end
 		state_shiftSong:
@@ -52,7 +53,7 @@ always @(*)
 
 	case (currentState)
 	state_idle: begin
-		songDone == 1'b1; //is this necessary??
+		//songDone = 1'b1; //is this necessary??
 	end
 	state_startSong: begin
 		resetSongCounter = 1'b1;
@@ -69,15 +70,19 @@ always @(*)
 		enableSongCounter = 1'b1;
 	end
 	state_waitForScreen:begin
-		//if (songCounter == 3'd4) songDone = 1'b1; //might need to put back in
+		if (songCounter == 3'd4) songDone = 1'b1; //might need to put back in
 	end
 	endcase
 end
 
+//tempo - for do file do 1/6 speed of clock
 always @ (posedge clock) begin //tempo - currently doing 1 second - 1Hz - 49999999 - 10111110101111000001111111
-	if (resetTempoCounter) tempoCounter = 26'd0; //add with tempo
-	else tempoCounter = tempoCounter + 26'd1;
-	if (tempoCounter == 26'd49999999) tempoCounter == 26'd0;
+	if (tempoCounter == /*26'd49999999*/ 26'd6) startNextBeat <= 1'b1;
+	else startNextBeat <= 1'b0;
+	if (resetTempoCounter) tempoCounter <= 26'd0; //add with tempo
+	else if (tempoCounter == /*26'd49999999*/ 26'd6) tempoCounter <= 26'd0;
+	else tempoCounter <= tempoCounter + 26'd1;
+	
 end
 
 always @ (posedge clock) begin //this will have to be changed in scale up

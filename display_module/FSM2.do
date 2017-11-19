@@ -1,7 +1,6 @@
 vlib work
-vlog lab7part2.v 
-vsim -L altera_mf_ver -L lpm_ver part2
-
+vlog FSM2.v 
+vsim FSM2
 log -r {/*}
 add wave {/*}
 force {clock} 0 0ns , 1 {1ns} -r 2ns
@@ -15,7 +14,7 @@ run 10ns
 
 force {reset} 0
 force {start} 1
-run 200ns
+run 60ns
 
 force {start} 0
 run 10ns
@@ -120,4 +119,5 @@ run 10ns
 force {shapeDone} 0
 run 10ns
 
-force {songDone} = 1
+force {songDone} 1
+run 10ns
