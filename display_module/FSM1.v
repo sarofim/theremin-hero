@@ -77,10 +77,10 @@ end
 
 //tempo - for do file do 1/6 speed of clock
 always @ (posedge clock) begin //tempo - currently doing 1 second - 1Hz - 49999999 - 10111110101111000001111111
-	if (tempoCounter == /*26'd49999999*/ 26'd6) startNextBeat <= 1'b1;
+	if (tempoCounter == 26'd49999999 /*26'd6*/) startNextBeat <= 1'b1;
 	else startNextBeat <= 1'b0;
 	if (resetTempoCounter) tempoCounter <= 26'd0; //add with tempo
-	else if (tempoCounter == /*26'd49999999*/ 26'd6) tempoCounter <= 26'd0;
+	else if (tempoCounter == 26'd49999999 /*26'd6*/) tempoCounter <= 26'd0;
 	else tempoCounter <= tempoCounter + 26'd1;
 	
 end

@@ -3,13 +3,13 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
                 output reg [8:0] vgaOutX, output reg [7:0] vgaOutY, output reg [2:0] vgaOutColour);
 
   //Resolution  = 320 * 240; 76800 = 17b'10010110000000000 (17bits)
-  //writing to 240*180 grid; 43200 = 15b'101,01000,1100,0000 (15bits)
+  //writing to 240*180 grid; 43200 = 15b'1010,1000,1100,0000 (16bits)
 //  reg [14:0] regAddress;
   reg [8:0] regX;
   reg [7:0] regY;
   reg [2:0] regColour;
-  reg [14:0] wireAddressOut;
-  reg [14:0] currentAddress;
+  reg [16:0] wireAddressOut;
+  reg [16:0] currentAddress;
 
   //3 shit register
   reg [3:0] regNote1, regNote2, regNote3;
@@ -37,21 +37,21 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   //noteSelect mux - loads start address for each box
   always@(posedge clock) begin
     case(boxCounter)
-      0: begin
-         colourSelect <= currentNote1;
-         wireAddressOut <= 15'b101101000000000;
-         end
       1: begin
-         colourSelect <= currentNote2;
-         wireAddressOut <= 15'b101101000111100;
-			end
+         colourSelect <= currentNote1;
+         wireAddressOut <= 17'b01011010000000000;
+         end
       2: begin
+         colourSelect <= currentNote2;
+         wireAddressOut <= 17'b01011010000111100;
+			end
+      3: begin
          colourSelect <= currentNote3;
-         wireAddressOut <= 15'b101101001111000;
+         wireAddressOut <= 17'b01011010001111000;
          end
       default: begin
          colourSelect <= 0;
-         wireAddressOut <= 15'd0;
+         wireAddressOut <= 17'd0;
          end
     endcase
   end
@@ -72,9 +72,12 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
 //		end
 //  end
 
+wire [16:0] pixelCountCorrectBits;
+assign pixelCountCorrectBits = {2'd0, pixelCount};
+
   always @(posedge clock) begin
-    if (reset) currentAddress <= 15'd0;
-    else currentAddress <= wireAddressOut + pixelCount;
+    if (reset) currentAddress <= 17'd0;
+    else if(loadX && loadY) currentAddress <= wireAddressOut + pixelCountCorrectBits;
   end
 
   //regX & regY
@@ -84,8 +87,8 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
       regY <= 8'd0;
       end
     else if (loadX && loadY) begin
-      regX <= {1'b0, currentAddress[14:7]};
-      regY <= {1'b0, currentAddress[6:0]};
+      regX <= currentAddress[16:8];
+      regY <= currentAddress[7:0];
       end
   end
 
@@ -106,13 +109,13 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   //default registers stuff
   always @(posedge clock) begin
     if (reset) begin
-      regDefaultX <= 8'd0;
-      regDefaultY <= 7'd0;
+      regDefaultX <= 9'd0;
+      regDefaultY <= 8'd0;
       regDefaultColour <= 3'd0;
       end
     else if (loadDefault) begin
-      regDefaultX <= {1'b0, gridCounter[14:7] /*defaultImageAddress[17:10]*/};
-      regDefaultY <= {1'b0, gridCounter[6:0] /*defaultImageAddress[9:3]*/};
+      regDefaultX <= {1'b0, gridCounter[15:8] /*defaultImageAddress[17:10]*/};
+      regDefaultY <= gridCounter[7:0] /*defaultImageAddress[9:3]*/;
       regDefaultColour <= 3'b000 /*defaultImageAddress[2:0]*/;
       end
   end
@@ -122,13 +125,13 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   always@(posedge clock) begin
     if(writeDefault) begin
       vgaOutX <= 9'd0 + regDefaultX;
-      vgaOutY <= 8'd120 + regDefaultY;
+      vgaOutY <= 8'd60 + regDefaultY;
       vgaOutColour <= regDefaultColour;
       end
     else if(writeToScreen) begin
       vgaOutX <= 9'd0 + regX;
-      vgaOutY <= 8'd120 + regY;
-      vgaOutColour <= regDefaultColour;
+      vgaOutY <= 8'd60 + regY;
+      vgaOutColour <= regInColour;
       end
   end
 
