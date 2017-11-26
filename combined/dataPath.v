@@ -125,7 +125,7 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   //other expantion : memory block for hold note
   //wire [2:0] bunHoldMemColour;
   //same input
-  //bunHoldImgMem bun(.clock(clock), .address(bunMemInputAddress), .data(3'd0), .wren(1'b0), .q(bunHoldMemColour));
+  //bunHoldImgMem memBH(.clock(clock), .address(bunMemInputAddress), .data(3'd0), .wren(1'b0), .q(bunHoldMemColour));
 
   //colourSelect mux;
   reg [2:0] regInColour;
