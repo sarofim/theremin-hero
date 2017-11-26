@@ -1,6 +1,6 @@
 module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, loadX, loadY, loadDefault, writeDefault, songDone,
-                input [15:0] gridCounter, input /*[1:0]*/ [3:0] boxCounter, input [14:0] pixelCount,
-                output reg [8:0] vgaOutX, output reg [7:0] vgaOutY, output reg [2:0] vgaOutColour);
+                input [15:0] gridCounter, input /*[1:0]*/ [3:0] boxCounter, input [14:0] pixelCount, input changeScore, addScore, note1, note2, note3,
+                output reg [8:0] vgaOutX, output reg [7:0] vgaOutY, output reg [2:0] vgaOutColour, output reg[7:0] score);
 
   //Resolution  = 320 * 240; 76800 = 17b'10010110000000000 (17bits)
   //writing to 240*180 grid; 43200 = 15b'1010,1000,1100,0000 (16bits)
@@ -11,6 +11,8 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   reg [16:0] wireAddressOut;
   reg [16:0] currentAddress;
 
+  reg [9:0] scoreCounterDummy
+  reg [7:0]scoreCounter;
   //3 shit register
   //reg [7:0] regNote1, regNote2, regNote3;
   reg [114:0] regNote1, regNote2, regNote3;
@@ -18,18 +20,7 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
       currentBox9, currentBox10, currentBox11, currentBox12;
   always@(posedge clock) begin
     if(reset || songDone || writeDefault) begin
-      //regNote1 <= 4'b0010;
-      //regNote2 <= 4'b0100;
-      //regNote3 <= 4'b1000;
-      //regNote1 <= 8'b00110000;
-      //regNote2 <= 8'b01001000;
-      //regNote3 <= 8'b10000000;
-		//regNote1 <= 128'b1111111100000000000000000000000011111111000000000000000000000000000000000000000011111111000000000000000000000000;
-		//regNote2 <= 128'b0000000011111111000000000000000000000000111111110000000000000000000000001010101000000000111111110000000000000000;
-		//regNote3 <= 128'b0000000000000000111111111111111100000000000000001111111111111111101010100000000000000000000000001111111111111111;
-		
-		
-      regNote1 <= 115'b0000000000000000000000001111111100000000000000000000000000000000000000001111111100000000000000000000000011111111000;
+    regNote1 <= 115'b0000000000000000000000001111111100000000000000000000000000000000000000001111111100000000000000000000000011111111000;
 		regNote2 <= 115'b0000000000000000111111110000000010101010000000000000000000000000111111110000000000000000000000001111111100000000000;
 		regNote3 <= 115'b1111111111111111000000000000000000000000101010101111111111111111000000000000000011111111111111110000000000000000000;
 		end
@@ -177,6 +168,28 @@ assign pixelCountCorrectBits = {1'd0, pixelCount[14:7], 1'd0, pixelCount[6:0]};
       end
   end
 
+  always @(*) begin
+    if (changeScore) begin
+      if (regNote1[0] & note1) scoreCounterDummy <= scoreCounterDummy + 1'b1;
+      if (regNote2[0] & note2) scoreCounterDummy <= scoreCounterDummy + 1'b1;
+      if (regNote3[0] & note3) scoreCounterDummy <= scoreCounterDummy + 1'b1;
+    end
+end
+
+always @(posedge clock) begin    
+    if (addScore) begin
+      if (scoreCounterDummy != 0) begin
+        scoreCounter <= scoreCounter + 8'd1;
+        scoreCounterDummy <= 10'd0;
+      end
+    end
+    if (songDone) begin
+        score <= scoreCounter;
+        scoreCounter <= 8'd0;        
+        scoreCounterDummy <= 10'd0;
+       end
+    else score <= 8'd0;
+  end
   //final mux select to assign outputs of VGA
   //vgaOut = starting position of square (0, 120) + regX/Y
   always@(posedge clock) begin
