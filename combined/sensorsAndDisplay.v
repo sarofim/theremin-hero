@@ -41,7 +41,6 @@ module sensorsAndDisplay(
 	output	[9:0]	VGA_R;   				//	VGA Red[9:0]
 	output	[9:0]	VGA_G;	 				//	VGA Green[9:0]
 	output	[9:0]	VGA_B;   				//	VGA Blue[9:0]
-	input [35:0] GPIO_0;
 	input				AUD_ADCDAT;
 	// Bidirectionals
 	inout				AUD_BCLK;

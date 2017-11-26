@@ -29,7 +29,8 @@ module Display
 	assign start = ~KEY[1];
 	assign reset = ~KEY[0];
 
-	output [6:0]HEX0, HEX1;
+	output [6:0]HEX0;
+	output [6:0]HEX1;
 
 	
 	// Do not change the following outputs
@@ -48,7 +49,7 @@ module Display
 	wire [2:0] colour;
 	wire [8:0] x;
 	wire [7:0] y;
-	wire [2:0]notes;
+	wire note1, note2, note3;
 
 	assign note1 = ~GPIO_0[32];
 	assign note2 = ~GPIO_0[31];
@@ -87,7 +88,7 @@ endmodule
 
 module CombinedShit (clock, reset, start, note1, note2, note3, vgaOutX, vgaOutY, vgaOutColour, writeToScreen, writeDefault);
 
-input clock, reset, start;
+input clock, reset, start, note1, note2, note3;
 output [7:0] vgaOutY;
 output [8:0] vgaOutX;
 output [2:0] vgaOutColour;

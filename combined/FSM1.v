@@ -77,7 +77,7 @@ always @(*)
 	state_waitForScreen:begin
 			enableSongCounter = 1'b1;
 			changeScore = 1'b1;
-		//if (songCounter == 3'd7) songDone = 1'b1; //might need to put back in
+		//if (songCounter == 8'd128) songDone = 1'b1; //might need to put back in
 	end
 	endcase
 end

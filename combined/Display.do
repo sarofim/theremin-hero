@@ -14,9 +14,13 @@ force {start} 0
 run 10000ns
 
 force {start} 1
-run 5ns
+run 100ns
 
 force {start} 0
 run 10000ns
 
+force {start} 1
+run 20ns
 
+force {start} 0
+run 10000ns

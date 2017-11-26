@@ -11,8 +11,8 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   reg [16:0] wireAddressOut;
   reg [16:0] currentAddress;
 
-  reg [9:0] scoreCounterDummy
-  reg [7:0]scoreCounter;
+  reg [9:0] scoreCounterDummy;
+  reg [7:0] scoreCounter;
   //3 shit register
   //reg [7:0] regNote1, regNote2, regNote3;
   reg [114:0] regNote1, regNote2, regNote3;
@@ -170,23 +170,22 @@ assign pixelCountCorrectBits = {1'd0, pixelCount[14:7], 1'd0, pixelCount[6:0]};
 
   always @(*) begin
     if (changeScore) begin
-      if (regNote1[0] & note1) scoreCounterDummy <= scoreCounterDummy + 1'b1;
-      if (regNote2[0] & note2) scoreCounterDummy <= scoreCounterDummy + 1'b1;
-      if (regNote3[0] & note3) scoreCounterDummy <= scoreCounterDummy + 1'b1;
+      if (regNote1[0] & note1) scoreCounterDummy <= scoreCounterDummy + 10'd1;
+      if (regNote2[0] & note2) scoreCounterDummy <= scoreCounterDummy + 10'd1;
+      if (regNote3[0] & note3) scoreCounterDummy <= scoreCounterDummy + 10'd1;
     end
+	 else if (addScore || songDone) scoreCounterDummy <= 10'd0;
 end
 
 always @(posedge clock) begin    
     if (addScore) begin
       if (scoreCounterDummy != 0) begin
         scoreCounter <= scoreCounter + 8'd1;
-        scoreCounterDummy <= 10'd0;
       end
     end
     if (songDone) begin
         score <= scoreCounter;
         scoreCounter <= 8'd0;        
-        scoreCounterDummy <= 10'd0;
        end
     else score <= 8'd0;
   end
