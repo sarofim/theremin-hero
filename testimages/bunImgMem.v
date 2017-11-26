@@ -1,7 +1,7 @@
 // megafunction wizard: %RAM: 1-PORT%
 // GENERATION: STANDARD
 // VERSION: WM1.0
-// MODULE: altsyncram 
+// MODULE: altsyncram
 
 // ============================================================
 // File Name: bunImgMem.v
@@ -19,18 +19,18 @@
 
 
 //Copyright (C) 1991-2016 Altera Corporation. All rights reserved.
-//Your use of Altera Corporation's design tools, logic functions 
-//and other software and tools, and its AMPP partner logic 
-//functions, and any output files from any of the foregoing 
-//(including device programming or simulation files), and any 
-//associated documentation or information are expressly subject 
-//to the terms and conditions of the Altera Program License 
+//Your use of Altera Corporation's design tools, logic functions
+//and other software and tools, and its AMPP partner logic
+//functions, and any output files from any of the foregoing
+//(including device programming or simulation files), and any
+//associated documentation or information are expressly subject
+//to the terms and conditions of the Altera Program License
 //Subscription Agreement, the Altera Quartus Prime License Agreement,
-//the Altera MegaCore Function License Agreement, or other 
-//applicable license agreement, including, without limitation, 
-//that your use is for the sole purpose of programming logic 
-//devices manufactured by Altera and sold by Altera or its 
-//authorized distributors.  Please refer to the applicable 
+//the Altera MegaCore Function License Agreement, or other
+//applicable license agreement, including, without limitation,
+//that your use is for the sole purpose of programming logic
+//devices manufactured by Altera and sold by Altera or its
+//authorized distributors.  Please refer to the applicable
 //agreement for further details.
 
 
@@ -87,7 +87,7 @@ module bunImgMem (
 	defparam
 		altsyncram_component.clock_enable_input_a = "BYPASS",
 		altsyncram_component.clock_enable_output_a = "BYPASS",
-		altsyncram_component.init_file = "D:/github/ece241-project/testimages/bun-60x60.mif",
+		altsyncram_component.init_file = "bun2.mif",
 		altsyncram_component.intended_device_family = "Cyclone V",
 		altsyncram_component.lpm_hint = "ENABLE_RUNTIME_MOD=NO",
 		altsyncram_component.lpm_type = "altsyncram",

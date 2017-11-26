@@ -116,8 +116,8 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   //bun memory block
   //memory address size 13bit - (4096 = 13'b1000000000000 - 3600 = 0111000010000)
   //memory block output = 3'b --> colour
-  wire [12:0] bunMemInputAddress;
-  assign bunMemInputAddress = {/*discuss it with michelle*/};
+  wire [11:0] bunMemInputAddress;
+  assign bunMemInputAddress = {pixelCount[12:7],pixelCount[5:0]};
   wire [2:0] bunMemColour;
   bunImgMem memB(.clock(clock), .address(bunMemInputAddress),
                   .data(3'd0), .wren(1'b0), .q(bunMemColour));
@@ -125,7 +125,7 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   //other expantion : memory block for hold note
   //wire [2:0] bunHoldMemColour;
   //same input
-  //bugHoldImgMem bun(.clock(clock), .address(bunMemInputAddress), .data(3'd0), .wren(1'b0), .q(bunHoldMemColour));
+  //bunHoldImgMem bun(.clock(clock), .address(bunMemInputAddress), .data(3'd0), .wren(1'b0), .q(bunHoldMemColour));
 
   //colourSelect mux;
   reg [2:0] regInColour;
