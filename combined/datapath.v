@@ -178,13 +178,17 @@ end
 
 always @(posedge clock) begin    
     if (addScore) begin
-      if (scoreCounterDummy != 0) scoreCounter <= scoreCounter + 1'b1;
+      if (scoreCounterDummy != 0) begin
+        scoreCounter <= scoreCounter + 8'd1;
+        scoreCounterDummy <= 10'd0;
+      end
     end
     if (songDone) begin
         score <= scoreCounter;
-        scoreCounter <= 0;
+        scoreCounter <= 8'd0;        
+        scoreCounterDummy <= 10'd0;
        end
-    else if score <= 0;
+    else score <= 8'd0;
   end
   //final mux select to assign outputs of VGA
   //vgaOut = starting position of square (0, 120) + regX/Y

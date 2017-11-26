@@ -50,9 +50,9 @@ module Display
 	wire [7:0] y;
 	wire [2:0]notes;
 
-	assign note1 = GPIO_0[32];
-	assign note2 = GPIO_0[31];
-	assign note3 = GPIO_0[30];
+	assign note1 = ~GPIO_0[32];
+	assign note2 = ~GPIO_0[31];
+	assign note3 = ~GPIO_0[30];
 
 
 	// Create an Instance of a VGA controller - there can be only one!
@@ -109,7 +109,7 @@ FSM B1 (clock, reset, start, loadDefault, writeDefault, loadX, loadY,
 dataPath B2 (clock, reset, shiftSong, writeToScreen, loadStartAddress, loadX, loadY, loadDefault, writeDefault, songDone,
 	gridCounter, boxCounter, pixelCount, changeScore, addScore, note1, note2, note3, vgaOutX, vgaOutY, vgaOutColour, score);
 
-assign scoreFinal = score / 8'd128;
+assign scoreFinal = (score / 8'd107) * 8'd100;
 
 hex H1 (scoreFinal[7:4], HEX1);
 hex H2 (scoreFinal[3:0], HEX0);
