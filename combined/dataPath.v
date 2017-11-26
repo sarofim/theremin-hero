@@ -119,13 +119,20 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   wire [12:0] bunMemInputAddress;
   assign bunMemInputAddress = {/*discuss it with michelle*/};
   wire [2:0] bunMemColour;
-  bunImgMem bunM0(.clock(clock), .address(bunMemInputAddress),
+  bunImgMem memB(.clock(clock), .address(bunMemInputAddress),
                   .data(3'd0), .wren(1'b0), .q(bunMemColour));
+
+  //other expantion : memory block for hold note
+  //wire [2:0] bunHoldMemColour;
+  //same input
+  //bugHoldImgMem bun(.clock(clock), .address(bunMemInputAddress), .data(3'd0), .wren(1'b0), .q(bunHoldMemColour));
 
   //colourSelect mux;
   reg [2:0] regInColour;
   always@(posedge clock) begin
-    if(colourSelect) regInColour <= bunMemColour; /*load white*/
+    //if(holdSelect) regInColour <= bunHoldMemColour; //load hold img colour
+    //else
+    if(colourSelect) regInColour <= bunMemColour; /*colour from memory block*/
     else regInColour <= 3'b111; /*white - background*/
   end
 
@@ -165,7 +172,7 @@ assign pixelCountCorrectBits = {1'd0, pixelCount[14:7], 1'd0, pixelCount[6:0]};
   reg [7:0] regDefaultY;
   reg [2:0] regDefaultColour;
 
-  //memory stuff
+  //default image memory
   wire [2:0] defaultMemColour;
   wire [15:0] defaultMemInputAddress;
   assign defaultMemInputAddress = gridCounter;
