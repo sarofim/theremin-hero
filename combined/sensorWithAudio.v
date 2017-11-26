@@ -208,4 +208,3 @@ always @ (posedge clock)
 			end
 	end
 endmodule 
-
