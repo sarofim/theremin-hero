@@ -1,6 +1,6 @@
 module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, loadX, loadY, loadDefault, writeDefault, songDone,
-                input [15:0] gridCounter, input /*[1:0]*/ [3:0] boxCounter, input [14:0] pixelCount,
-                output reg [8:0] vgaOutX, output reg [7:0] vgaOutY, output reg [2:0] vgaOutColour);
+                input [15:0] gridCounter, input /*[1:0]*/ [3:0] boxCounter, input [14:0] pixelCount, input changeScore, addScore, note1, note2, note3,
+                output reg [8:0] vgaOutX, output reg [7:0] vgaOutY, output reg [2:0] vgaOutColour, output reg[7:0] score);
 
   //Resolution  = 320 * 240; 76800 = 17b'10010110000000000 (17bits)
   //writing to 240*180 grid; 43200 = 15b'1010,1000,1100,0000 (16bits)
@@ -11,6 +11,8 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   reg [16:0] wireAddressOut;
   reg [16:0] currentAddress;
 
+  reg [9:0] scoreCounterDummy;
+  reg [7:0] scoreCounter;
   //3 shit register
   //reg [7:0] regNote1, regNote2, regNote3;
   reg [114:0] regNote1, regNote2, regNote3;
@@ -183,6 +185,27 @@ assign pixelCountCorrectBits = {1'd0, pixelCount[14:7], 1'd0, pixelCount[6:0]};
       end
   end
 
+  always @(*) begin
+    if (changeScore) begin
+      if (regNote1[0] & note1) scoreCounterDummy <= scoreCounterDummy + 10'd1;
+      if (regNote2[0] & note2) scoreCounterDummy <= scoreCounterDummy + 10'd1;
+      if (regNote3[0] & note3) scoreCounterDummy <= scoreCounterDummy + 10'd1;
+    end
+	 else if (addScore || songDone) scoreCounterDummy <= 10'd0;
+end
+
+always @(posedge clock) begin    
+    if (addScore) begin
+      if (scoreCounterDummy != 0) begin
+        scoreCounter <= scoreCounter + 8'd1;
+      end
+    end
+    if (songDone) begin
+        score <= scoreCounter;
+        scoreCounter <= 8'd0;        
+       end
+    else score <= 8'd0;
+  end
   //final mux select to assign outputs of VGA
   //vgaOut = starting position of square (0, 120) + regX/Y
   always@(posedge clock) begin

@@ -1,5 +1,5 @@
 module FSM1 (clock, reset, readyForSong, beatIncremented, shiftSong, 
-	songDone, songCounter);
+	songDone, songCounter, changeScore, addScore);
 
 input clock;
 input reset;
@@ -9,6 +9,8 @@ output reg shiftSong;
 output reg songDone;
 //output reg [3:0]songCounter; //enter with length of song [7:0] for 128
 output reg [7:0] songCounter;
+output reg changeScore, addScore;
+
 
 reg [3:0]currentState, nextState;
 reg enableSongCounter, resetSongCounter;
@@ -41,7 +43,7 @@ always @(*)
 			else nextState = state_waitForScreen;
 		end
 	endcase
-end
+end 
 
 always @(*)
 	begin: enable_signals
@@ -51,6 +53,8 @@ always @(*)
 	resetSongCounter = 1'b0;
 	beatIncremented = 1'b0;
 	resetTempoCounter = 1'b0;
+	changeScore = 1'b0;
+	addScore = 1'b0;
 
 	case (currentState)
 	state_idle: begin
@@ -61,17 +65,19 @@ always @(*)
 		resetTempoCounter = 1'b1;
 	end
 	state_waitForSongBeat: begin
-		//??? nothing???
 	end
 	state_shiftSong: begin
 		shiftSong = 1'b1;
+		addScore = 1'b1;
+
 	end
 	state_drawScreen:begin
 		beatIncremented = 1'b1;
 	end
 	state_waitForScreen:begin
 			enableSongCounter = 1'b1;
-		//if (songCounter == 3'd7) songDone = 1'b1; //might need to put back in
+			changeScore = 1'b1;
+		//if (songCounter == 8'd128) songDone = 1'b1; //might need to put back in
 	end
 	endcase
 end
