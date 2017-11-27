@@ -1,11 +1,11 @@
 module FSM (clock, reset, start, loadDefault, writeDefault, loadX, loadY, 
-	writeToScreen, loadStartAddress, shiftSong, gridCounter, boxCounter, songCounter, pixelCount, memAddressPixelCount, songDone, changeScore, addScore);
+	writeToScreen, loadStartAddress, shiftSong, gridCounter, memAddressGridCounter, boxCounter, songCounter, pixelCount, memAddressPixelCount, songDone, changeScore, addScore);
 	
 	input clock;
 	input reset;
 	input start;
 	output loadDefault, writeDefault, loadX, loadY, writeToScreen, loadStartAddress, shiftSong;
-	output [15:0]gridCounter;
+	output [15:0]gridCounter, memAddressGridCounter;
 	output [3:0]boxCounter;
 	output [14:0]pixelCount, memAddressPixelCount;
 	//output [3:0]songCounter;
@@ -21,7 +21,7 @@ module FSM (clock, reset, start, loadDefault, writeDefault, loadX, loadY,
 		songDone, songCounter, changeScore, addScore);
 		
 	FSM2 B2 (clock, reset, start, beatIncremented, songDone, shapeDone, loadDefault, 
-		writeDefault, readyForSong, loadStartAddress, startingAddressLoaded, gridCounter, boxCounter, currentState, nextState);
+		writeDefault, readyForSong, loadStartAddress, startingAddressLoaded, gridCounter, memAddressGridCounter, boxCounter, currentState, nextState);
 	
 	FSM3 B3 (clock, reset, startingAddressLoaded, shapeDone, loadX, loadY, writeToScreen, pixelCount, memAddressPixelCount);
 	
