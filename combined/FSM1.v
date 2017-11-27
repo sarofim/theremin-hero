@@ -14,7 +14,7 @@ output reg changeScore, addScore;
 
 reg [3:0]currentState, nextState;
 reg enableSongCounter, resetSongCounter;
-reg [22:0]tempoCounter; //enter with correct speed
+	reg [4:0]tempoCounter; //enter with correct speed
 reg resetTempoCounter;
 reg startNextBeat;
 
@@ -83,13 +83,13 @@ always @(*)
 end
 
 //tempo - for do file do 1/6 speed of clock
-always @ (posedge clock) begin //tempo - currently doing 1 second - 1Hz - 49999999 - 10111110101111000001111111
+always @ (posedge clock) begin //tempo - currently doing 1 second - 1Hz - 49999999 - 10111110101111000001111111 
 	//change tempo to 1/8 of a second - 6250000 - 23'd6250000
-	if (tempoCounter == /*26'd49999999*/ 23'd6250000) startNextBeat <= 1'b1;
+	if (tempoCounter == 25'd24999999 /* 23'd6250000*/) startNextBeat <= 1'b1;
 	else startNextBeat <= 1'b0;
-	if (resetTempoCounter) tempoCounter <= 26'd0; //add with tempo
-	else if (tempoCounter == /*26'd49999999*/ 23'd6250000) tempoCounter <= 23'd0;
-	else tempoCounter <= tempoCounter + 23'd1;
+	if (resetTempoCounter) tempoCounter <= 25'd0; //add with tempo
+	else if (tempoCounter == 25'd24999999 /*23'd6250000*/) tempoCounter <= 25'd0;
+	else tempoCounter <= tempoCounter + 25'd1;
 	
 end
 
