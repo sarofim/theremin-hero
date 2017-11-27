@@ -166,7 +166,7 @@ assign pixelCountCorrectBits = {1'd0, pixelCount[14:7], 1'd0, pixelCount[6:0]};
   //default image memory
   wire [2:0] defaultMemColour;
   wire [15:0] defaultMemInputAddress;
-  assign defaultMemInputAddress = memAdressGridCounter;
+  assign defaultMemInputAddress = memAddressGridCounter;
   defaultImgMem memD(.clock(clock), .address(defaultInputAddress),
                      .data(3'd0), .wren(1'b0), .q(defaultMemColour));
 
