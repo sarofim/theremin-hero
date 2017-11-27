@@ -16,9 +16,9 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   //3 shit register
   //reg [7:0] regNote1, regNote2, regNote3;
   //reg [114:0] regNote1, regNote2, regNote3;
-	reg [58:0] regNote1, regNote2, regNote3, holdSelect;
+	reg [58:0] regNote1, regNote2, regNote3, regHoldSelect;
 	reg currentBox1, currentBox2, currentBox3, currentBox4, currentBox5, currentBox6, currentBox7, currentBox8,
-      currentBox9, currentBox10, currentBox11, currentBox12;
+      currentBox9, currentBox10, currentBox11, currentBox12, holdSelect;
   always@(posedge clock) begin
     if(reset || songDone || writeDefault) begin
     	//regNote1 <= 115'b0000000000000000000000001111111100000000000000000000000000000000000000001111111100000000000000000000000011111111000;
@@ -27,7 +27,7 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
 	regNote1 <= 59'b00000000000011110000000000000000000011110000000000001111000;
 	regNote2 <= 59'b00000000111100001111000000000000111100000000000011110000000;
 	regNote3 <= 59'b11111111000000000000111111111111000000001111111100000000000; //56 total 1s
-	holdSelect <= 59'b11111110111011100000000011111110111011101111111011101110000; //1 is hold, 0 is it's own note
+	regHoldSelect <= 59'b11111110111011100000000011111110111011101111111011101110000; //1 is hold, 0 is it's own note
 
     end
     else if(shiftSong) begin
@@ -44,10 +44,12 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
       currentBox10 <= regNote3[2];
       currentBox11 <= regNote3[1];
       currentBox12 <= regNote3[0];
+      holdSelect <= regHoldSelect[0];
       //shift all registers right
       regNote1 <= regNote1 >> 1'b1;
       regNote2 <= regNote2 >> 1'b1;
       regNote3 <= regNote3 >> 1'b1;
+      regHoldSelect <= regHoldSelect >> 1'b1;
       end
   end
 
@@ -127,7 +129,7 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   //colourSelect mux;
   reg [2:0] regInColour;
   always@(posedge clock) begin
-    //if(holdSelect) regInColour <= bunHoldMemColour; //load hold img colour
+	  //if(holdSelect && colourSelect) regInColour <= bunHoldMemColour; //load hold img colour
     //else
     if(colourSelect) regInColour <= bunMemColour; /*colour from memory block*/
     else regInColour <= 3'b111; /*white - background*/
