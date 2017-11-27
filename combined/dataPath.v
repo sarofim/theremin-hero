@@ -1,5 +1,5 @@
 module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, loadX, loadY, loadDefault, writeDefault, songDone,
-                input [15:0] gridCounter, input /*[1:0]*/ [3:0] boxCounter, input [14:0] pixelCount, input changeScore, addScore, note1, note2, note3,
+		input [15:0] gridCounter, memAddressGridCounter, input /*[1:0]*/ [3:0] boxCounter, input [14:0] pixelCount, input [14:0] memAddressPixelCount, input changeScore, addScore, note1, note2, note3,
                 output reg [8:0] vgaOutX, output reg [7:0] vgaOutY, output reg [2:0] vgaOutColour, output reg[7:0] score);
 
   //Resolution  = 320 * 240; 76800 = 17b'10010110000000000 (17bits)
@@ -108,7 +108,7 @@ module dataPath(input clock, reset, shiftSong, writeToScreen, loadStartAddress, 
   //memory address size 13bit - (4096 = 13'b1000000000000 - 3600 = 0111000010000)
   //memory block output = 3'b --> colour
   wire [11:0] bunMemInputAddress;
-  assign bunMemInputAddress = {pixelCount[12:7],pixelCount[5:0]};
+	assign bunMemInputAddress = memAddressPixelCount[11:0];
   wire [2:0] bunMemColour;
   bunImgMem memB(.clock(clock), .address(bunMemInputAddress),
                   .data(3'd0), .wren(1'b0), .q(bunMemColour));
@@ -166,7 +166,7 @@ assign pixelCountCorrectBits = {1'd0, pixelCount[14:7], 1'd0, pixelCount[6:0]};
   //default image memory
   wire [2:0] defaultMemColour;
   wire [15:0] defaultMemInputAddress;
-  assign defaultMemInputAddress = gridCounter;
+  assign defaultMemInputAddress = memAddressGridCounter;
   defaultImgMem memD(.clock(clock), .address(defaultInputAddress),
                      .data(3'd0), .wren(1'b0), .q(defaultMemColour));
 

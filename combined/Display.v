@@ -78,7 +78,7 @@ module Display
 		defparam VGA.RESOLUTION = "320x240";
 		defparam VGA.MONOCHROME = "FALSE";
 		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
-		defparam VGA.BACKGROUND_IMAGE = "black.mif";
+		defparam VGA.BACKGROUND_IMAGE = "bg-320x240.mif";
 			
 	// Put your code here. Your code should produce signals x,y,colour and writeEn
 	// for the VGA controller, in addition to any other functionality your design may require.
@@ -96,19 +96,19 @@ output writeToScreen, writeDefault;
 
 wire loadDefault, loadX, loadY, loadStartAddress, shiftSong, songDone, changeScore, addScore;
 
-wire [15:0] gridCounter;
+	wire [15:0] gridCounter, memAddressGridCounter;
 wire [3:0] boxCounter;
-wire [14:0] pixelCount;
+	wire [14:0] pixelCount, memAddressPixelCount;
 //wire [3:0] songCounter;
 wire [7:0] songCounter;
 wire [7:0] score;
 wire[7:0] scoreFinal;
 FSM B1 (clock, reset, start, loadDefault, writeDefault, loadX, loadY, 
-	writeToScreen, loadStartAddress, shiftSong, gridCounter, boxCounter, songCounter, pixelCount, songDone, changeScore, addScore);
+	writeToScreen, loadStartAddress, shiftSong, gridCounter, memAddressGridCounter, boxCounter, songCounter, pixelCount, memAddressPixelCount, songDone, changeScore, addScore);
 	
 	
 dataPath B2 (clock, reset, shiftSong, writeToScreen, loadStartAddress, loadX, loadY, loadDefault, writeDefault, songDone,
-	gridCounter, boxCounter, pixelCount, changeScore, addScore, note1, note2, note3, vgaOutX, vgaOutY, vgaOutColour, score);
+	gridCounter, memAddressGridCounter, boxCounter, pixelCount, memAddressPixelCount, changeScore, addScore, note1, note2, note3, vgaOutX, vgaOutY, vgaOutColour, score);
 
 assign scoreFinal = (score / 8'd107) * 8'd100;
 
