@@ -1,5 +1,5 @@
 module FSM2 (clock, reset, start, beatIncremented, songDone, shapeDone, loadDefault, 
-	writeDefault, readyForSong, loadStartAddress, startingAddressLoaded, gridCounter, boxCounter, currentState, nextState);
+	writeDefault, readyForSong, loadStartAddress, startingAddressLoaded, gridCounter, memAddressGridCounter, boxCounter, currentState, nextState);
 
 input clock;
 input start;
@@ -12,11 +12,13 @@ output reg writeDefault;
 output reg readyForSong;
 output reg loadStartAddress;
 output reg startingAddressLoaded;
-output reg [15:0]gridCounter; //240*180 = 43200 in binary - 16 bits
+	output reg [15:0]gridCounter, memAddressGridCounter; //240*180 = 43200 in binary - 16 bits
 //output reg [1:0]boxCounter; //3 boxes - 3 in binary is 11
 output reg [3:0]boxCounter; //12 boxes - 12 in binary is 1100
 output reg [3:0] currentState, nextState;
 
+	reg [7:0] xCount;
+	reg [7:0] yCount;
 
 //reg [3:0]currentState, nextState; //1011 = 11 in binary - 4 bits needed
 reg enableGridCounter, resetGridCounter, 
@@ -41,7 +43,7 @@ always@(*)
 		state_resetWait: nextState = reset ? state_resetWait : state_idle;
 		state_idle: nextState = state_loadDefault;
 		state_loadDefault: nextState = state_writeDefault;
-		state_writeDefault: nextState = (gridCounter == 16'd43200) ? state_start : state_loadDefault;
+		state_writeDefault: nextState = (xCount == 8'd239 && yCount == 8'd179) ? state_start : state_loadDefault;
 		state_start: nextState = start ? state_startWait : state_start;
 		state_startWait: nextState = start ? state_startWait : state_waitForSong;
 		state_waitForSong: begin
@@ -116,11 +118,26 @@ always @(*)
 
 	endcase		
 end
-
-
+	
 always @ (posedge clock) begin
-	if (resetGridCounter) gridCounter = 16'd0;
-	else if (enableGridCounter) gridCounter = gridCounter + 16'd1;
+	if (resetGridCounter) begin
+		gridCounter = 16'd0;
+		memAddressGridCounter = 16'd0;
+		xCount = 8'd0;
+		yCount = 8'b0;
+	end
+	else if (enableGridCounter) begin
+		if (xCount == 8'd239) begin
+			yCount = yCount + 8'd1;
+			xCount = 8'd0;
+			memAddressGridCounter = memAddressGridCounter + 16'd1;
+		end
+		else begin
+			memAddressGridCounter = memAddressGridCounter + 16'd1;
+			xCount = xCount + 8'd1;
+		end
+		gridCounter = {xCount, yCount};
+	end
 end
 
 always @ (posedge clock) begin //this will have to be changed in scale up

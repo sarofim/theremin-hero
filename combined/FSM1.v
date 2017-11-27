@@ -14,7 +14,7 @@ output reg changeScore, addScore;
 
 reg [3:0]currentState, nextState;
 reg enableSongCounter, resetSongCounter;
-reg [22:0]tempoCounter; //enter with correct speed
+reg [24:0]tempoCounter; //enter with correct speed
 reg resetTempoCounter;
 reg startNextBeat;
 
@@ -38,8 +38,8 @@ always @(*)
 			nextState = state_drawScreen;
 		state_drawScreen: nextState = state_waitForScreen;
 		state_waitForScreen: begin
-			if (readyForSong & songCounter == /*4'd8*/ 8'd128) nextState = state_idle;//enter with length of song - 8'd128
-			else if (readyForSong & songCounter != /*4'd8*/ 8'd128) nextState = state_waitForSongBeat; //8'd128
+			if (readyForSong & songCounter == /*4'd8*/ 8'd60) nextState = state_idle;//enter with length of song - 8'd128
+			else if (readyForSong & songCounter != /*4'd8*/ 8'd60) nextState = state_waitForSongBeat; //8'd128
 			else nextState = state_waitForScreen;
 		end
 	endcase
@@ -84,12 +84,12 @@ end
 
 //tempo - for do file do 1/6 speed of clock
 always @ (posedge clock) begin //tempo - currently doing 1 second - 1Hz - 49999999 - 10111110101111000001111111
-	//change tempo to 1/8 of a second - 6250000 - 23'd6250000
-	if (tempoCounter == /*26'd49999999*/ 23'd6250000) startNextBeat <= 1'b1;
+	//change tempo to 2/8 of a second - 12500000 - 24'd12500000
+	if (tempoCounter == /*26'd49999999*/ 25'd25000000) startNextBeat <= 1'b1;
 	else startNextBeat <= 1'b0;
-	if (resetTempoCounter) tempoCounter <= 26'd0; //add with tempo
-	else if (tempoCounter == /*26'd49999999*/ 23'd6250000) tempoCounter <= 23'd0;
-	else tempoCounter <= tempoCounter + 23'd1;
+	if (resetTempoCounter) tempoCounter <= 25'd0; //add with tempo
+	else if (tempoCounter == /*26'd49999999*/ 25'd25000000) tempoCounter <= 25'd0;
+	else tempoCounter <= tempoCounter + 25'd1;
 	
 end
 
