@@ -96,7 +96,7 @@ output writeToScreen, writeDefault;
 
 wire loadDefault, loadX, loadY, loadStartAddress, shiftSong, songDone, changeScore, addScore;
 
-wire [15:0] gridCounter;
+	wire [15:0] gridCounter, memAddressGridCounter;
 wire [3:0] boxCounter;
 	wire [14:0] pixelCount, memAddressPixelCount;
 //wire [3:0] songCounter;
@@ -104,11 +104,11 @@ wire [7:0] songCounter;
 wire [7:0] score;
 wire[7:0] scoreFinal;
 FSM B1 (clock, reset, start, loadDefault, writeDefault, loadX, loadY, 
-	writeToScreen, loadStartAddress, shiftSong, gridCounter, boxCounter, songCounter, pixelCount, memAddressPixelCount, songDone, changeScore, addScore);
+	writeToScreen, loadStartAddress, shiftSong, gridCounter, memAddressGridCounter, boxCounter, songCounter, pixelCount, memAddressPixelCount, songDone, changeScore, addScore);
 	
 	
 dataPath B2 (clock, reset, shiftSong, writeToScreen, loadStartAddress, loadX, loadY, loadDefault, writeDefault, songDone,
-	gridCounter, boxCounter, pixelCount, memAddressPixelCount, changeScore, addScore, note1, note2, note3, vgaOutX, vgaOutY, vgaOutColour, score);
+	gridCounter, memAddressGridCounter, boxCounter, pixelCount, memAddressPixelCount, changeScore, addScore, note1, note2, note3, vgaOutX, vgaOutY, vgaOutColour, score);
 
 assign scoreFinal = (score / 8'd107) * 8'd100;
 
