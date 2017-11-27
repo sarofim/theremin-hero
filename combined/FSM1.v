@@ -39,7 +39,7 @@ always @(*)
 		state_drawScreen: nextState = state_waitForScreen;
 		state_waitForScreen: begin
 			if (readyForSong & songCounter == /*4'd8*/ /*8'd128*/ 8'd65) nextState = state_idle;//enter with length of song - 8'd128
-			else if (readyForSong & songCounter != /*4'd8*/ /*8'd128*/ 8'65) nextState = state_waitForSongBeat; //8'd128
+			else if (readyForSong & songCounter != /*4'd8*/ /*8'd128*/ 8'd65) nextState = state_waitForSongBeat; //8'd128
 			else nextState = state_waitForScreen;
 		end
 	endcase
