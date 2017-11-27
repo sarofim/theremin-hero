@@ -8,7 +8,7 @@ output reg beatIncremented;
 output reg shiftSong;
 output reg songDone;
 //output reg [3:0]songCounter; //enter with length of song [7:0] for 128
-output reg [7:0] songCounter;
+	output reg [7:0] songCounter; //song length is 59 bits - try 63
 output reg changeScore, addScore;
 
 
@@ -38,8 +38,8 @@ always @(*)
 			nextState = state_drawScreen;
 		state_drawScreen: nextState = state_waitForScreen;
 		state_waitForScreen: begin
-			if (readyForSong & songCounter == /*4'd8*/ 8'd128) nextState = state_idle;//enter with length of song - 8'd128
-			else if (readyForSong & songCounter != /*4'd8*/ 8'd128) nextState = state_waitForSongBeat; //8'd128
+			if (readyForSong & songCounter == /*4'd8*/ /*8'd128*/ 8'd65) nextState = state_idle;//enter with length of song - 8'd128
+			else if (readyForSong & songCounter != /*4'd8*/ /*8'd128*/ 8'65) nextState = state_waitForSongBeat; //8'd128
 			else nextState = state_waitForScreen;
 		end
 	endcase
