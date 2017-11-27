@@ -110,7 +110,7 @@ FSM B1 (clock, reset, start, loadDefault, writeDefault, loadX, loadY,
 dataPath B2 (clock, reset, shiftSong, writeToScreen, loadStartAddress, loadX, loadY, loadDefault, writeDefault, songDone,
 	gridCounter, memAddressGridCounter, boxCounter, pixelCount, memAddressPixelCount, changeScore, addScore, note1, note2, note3, vgaOutX, vgaOutY, vgaOutColour, score);
 
-assign scoreFinal = (score / 8'd107) * 8'd100;
+	assign scoreFinal = (score / 8'd56) * 8'd100;
 
 hex H1 (scoreFinal[7:4], HEX1);
 hex H2 (scoreFinal[3:0], HEX0);
