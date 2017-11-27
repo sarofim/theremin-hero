@@ -1,6 +1,6 @@
 module FSM3 (input clock, reset, startingAddressLoaded,
                      output reg shapeDone, loadX, loadY, writeToScreen,
-                     output reg [14:0] pixelCount);
+	     output reg [14:0] pixelCount, memAddressPixelCount);
   reg [1:0] currentState, nextState;
 	reg [7:0]xCount;
 	reg [6:0]yCount;
@@ -51,23 +51,28 @@ always@(posedge clock) begin
 		pixelCount = 15'd0;
 		xCount = 8'd0;
 		yCount = 7'd0;
+	    	memAddressPixelCount = 15'd0;
 	 end
-    else if (xCount == 8'd60 && yCount == 7'd60 & pixelCounterIncrement)
+    else begin
+	    if (xCount == 8'd60 && yCount == 7'd60 & pixelCounterIncrement)
 		begin
 			pixelCount = 15'd0;
 			xCount = 8'd0;
-			yCount = 7'b0;
+			yCount = 7'b0;			
 		end
 	 else if(pixelCounterIncrement) begin
 		if (xCount == 8'd60) begin
 			yCount = yCount + 1'd1;
 			xCount = 8'd0;
+			memAddressPixelCount = memAddressPixelCount + 15'd1;
 		end
 		else begin
+			memAddressPixelCount = memAddressPixelCount + 15'd1;
 			xCount = xCount + 8'd1;
 		end
 		pixelCount = {xCount, yCount};
 	end
+    end
 end
 
   always@(posedge clock)
