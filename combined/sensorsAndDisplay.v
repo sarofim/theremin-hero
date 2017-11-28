@@ -23,7 +23,6 @@ module sensorsAndDisplay(
 		AUD_DACDAT,
 		FPGA_I2C_SCLK,
 		LEDR,
-		HEX1,
 		HEX0
 		);
 	input			CLOCK_50;				//	50 MHz
@@ -31,7 +30,6 @@ module sensorsAndDisplay(
 	input [3:0]KEY;
 	input [9:0] SW;
 	input [35:0] GPIO_0;
-	output [6:0]HEX1;
 	output [6:0] HEX0;
 	output			VGA_CLK;   				//	VGA Clock
 	output			VGA_HS;					//	VGA H_SYNC
@@ -71,7 +69,6 @@ module sensorsAndDisplay(
 		VGA_R,   						//	VGA Red[9:0]
 		VGA_G,	 						//	VGA Green[9:0]
 		VGA_B,   						//	VGA Blue[9:0]
-		HEX1,
 		HEX0
 	);
 	

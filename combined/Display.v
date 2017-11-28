@@ -13,8 +13,7 @@ module Display
 		VGA_SYNC_N,						//	VGA SYNC
 		VGA_R,   						//	VGA Red[9:0]
 		VGA_G,	 						//	VGA Green[9:0]
-		VGA_B ,  						//	VGA Blue[9:0]
-		HEX1,
+		VGA_B,  						//	VGA Blue[9:0]
 		HEX0
 	);
 
@@ -30,7 +29,6 @@ module Display
 	assign reset = ~KEY[0];
 
 	output [6:0]HEX0;
-	output [6:0]HEX1;
 
 	
 	// Do not change the following outputs
@@ -82,17 +80,18 @@ module Display
 			
 	// Put your code here. Your code should produce signals x,y,colour and writeEn
 	// for the VGA controller, in addition to any other functionality your design may require.
-		CombinedShit I1 (CLOCK_50, reset, start, note1, note2, note3, x, y, colour, writeToScreen, writeDefault); 
+		CombinedShit I1 (CLOCK_50, reset, start, note1, note2, note3, x, y, colour, writeToScreen, writeDefault, HEX0); 
 	
 endmodule
 
-module CombinedShit (clock, reset, start, note1, note2, note3, vgaOutX, vgaOutY, vgaOutColour, writeToScreen, writeDefault);
+module CombinedShit (clock, reset, start, note1, note2, note3, vgaOutX, vgaOutY, vgaOutColour, writeToScreen, writeDefault, HEX0);
 
 input clock, reset, start, note1, note2, note3;
 output [7:0] vgaOutY;
 output [8:0] vgaOutX;
 output [2:0] vgaOutColour;
 output writeToScreen, writeDefault;
+output [6:0]HEX0;
 
 wire loadDefault, loadX, loadY, loadStartAddress, shiftSong, songDone, changeScore, addScore;
 
@@ -108,12 +107,8 @@ FSM B1 (clock, reset, start, loadDefault, writeDefault, loadX, loadY,
 	
 	
 dataPath B2 (clock, reset, shiftSong, writeToScreen, loadStartAddress, loadX, loadY, loadDefault, writeDefault, songDone,
-	gridCounter, memAddressGridCounter, boxCounter, pixelCount, memAddressPixelCount, changeScore, addScore, note1, note2, note3, vgaOutX, vgaOutY, vgaOutColour, score);
+	gridCounter, memAddressGridCounter, boxCounter, pixelCount, memAddressPixelCount, changeScore, addScore, note1, note2, note3, vgaOutX, vgaOutY, vgaOutColour, score, HEX0[6:0]);
 
-assign scoreFinal = (score / 8'd107) * 8'd100;
-
-hex H1 (scoreFinal[7:4], HEX1);
-hex H2 (scoreFinal[3:0], HEX0);
 
 endmodule
 
